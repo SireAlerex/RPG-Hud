@@ -1,19 +1,12 @@
 package net.spellcraftgaming.rpghud.gui.hud.element;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.render.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -141,11 +134,11 @@ public abstract class HudElement {
     /**
      * Function called to draw this element on the screen
      */
-    public void draw(DrawableHelper gui, MatrixStack ms, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
-        this.drawElement(gui, ms, zLevel, partialTicks, scaledWidth, scaledHeight);
+    public void draw(DrawContext gui, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
+        this.drawElement(gui, zLevel, partialTicks, scaledWidth, scaledHeight);
     }
 
-    public abstract void drawElement(DrawableHelper gui, MatrixStack ms, float zLevel, float partialTicks, int scaledWidth, int scaledHeight);
+    public abstract void drawElement(DrawContext gui, float zLevel, float partialTicks, int scaledWidth, int scaledHeight);
 
     /**
      * Returns the x coordinate of this element
@@ -190,14 +183,6 @@ public abstract class HudElement {
     public float getInvertedScale() {
         return 1f / getScale();
     }
-    /**
-     * Returns whether this element can be moved or not
-     * 
-     * @return moveable
-     */
-    public boolean isMoveable() {
-        return this.moveable;
-    }
 
     /**
      * Returns the type of this element
@@ -210,7 +195,7 @@ public abstract class HudElement {
 
     /**
      * Sets the position of this element to posX and posY if they are valid
-     * 
+     *
      * @param posX
      * @param posY
      * @return whether the position is valid or not
@@ -263,7 +248,7 @@ public abstract class HudElement {
      * @param color
      *            the color of the rectangle
      */
-    public static void drawRect(MatrixStack ms, int posX, int posY, int width, int height, int color) {
+    public static void drawRect(DrawContext ms, int posX, int posY, int width, int height, int color) {
     	if (color == -1)
             return;
         float f3;
@@ -280,10 +265,10 @@ public abstract class HudElement {
         RenderSystem.disableDepthTest();
         BufferBuilder vertexbuffer = Tessellator.getInstance().getBuffer();
         vertexbuffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        vertexbuffer.vertex(ms.peek().getPositionMatrix(), posX, posY + height, 0).color(f, f1, f2, f3).next();
-        vertexbuffer.vertex(ms.peek().getPositionMatrix(), posX + width, posY + height, 0).color(f, f1, f2, f3).next();
-        vertexbuffer.vertex(ms.peek().getPositionMatrix(), posX + width, posY, 0).color(f, f1, f2, f3).next();
-        vertexbuffer.vertex(ms.peek().getPositionMatrix(), posX, posY, 0).color(f, f1, f2, f3).next();
+        vertexbuffer.vertex(ms.getMatrices().peek().getPositionMatrix(), posX, posY + height, 0).color(f, f1, f2, f3).next();
+        vertexbuffer.vertex(ms.getMatrices().peek().getPositionMatrix(), posX + width, posY + height, 0).color(f, f1, f2, f3).next();
+        vertexbuffer.vertex(ms.getMatrices().peek().getPositionMatrix(), posX + width, posY, 0).color(f, f1, f2, f3).next();
+        vertexbuffer.vertex(ms.getMatrices().peek().getPositionMatrix(), posX, posY, 0).color(f, f1, f2, f3).next();
         BufferRenderer.drawWithGlobalProgram(vertexbuffer.end());
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();
@@ -302,7 +287,7 @@ public abstract class HudElement {
      *            the height of the outline
      * @param color
      */
-    protected static void drawOutline(MatrixStack ms, int x, int y, int width, int height, int color) {
+    protected static void drawOutline(DrawContext ms, int x, int y, int width, int height, int color) {
         drawRect(ms, x, y, width, 1, color);
         drawRect(ms, x, y+1, 1, height-2, color);
         drawRect(ms, x + width - 1, y+1, 1, height-2, color);
@@ -327,7 +312,7 @@ public abstract class HudElement {
      * @param colorBarDark
      *            the color for the bar (dark
      */
-    public static void drawCustomBar(MatrixStack ms, int x, int y, int width, int height, double value, int colorBarLight, int colorBarDark) {
+    public static void drawCustomBar(DrawContext ms, int x, int y, int width, int height, double value, int colorBarLight, int colorBarDark) {
         drawCustomBar(ms, x, y, width, height, value, HudElement.COLOR_DEFAULT[0], HudElement.COLOR_DEFAULT[1], colorBarLight, colorBarDark, true, 0x000000);
     }
 
@@ -353,7 +338,7 @@ public abstract class HudElement {
      * @param colorBarDark
      *            the color for the bar (dark
      */
-    public static void drawCustomBar(MatrixStack ms, int x, int y, int width, int height, double value, int colorGroundLight, int colorGroundDark, int colorBarLight, int colorBarDark) {
+    public static void drawCustomBar(DrawContext ms, int x, int y, int width, int height, double value, int colorGroundLight, int colorGroundDark, int colorBarLight, int colorBarDark) {
         drawCustomBar(ms, x, y, width, height, value, colorGroundLight, colorGroundDark, colorBarLight, colorBarDark, true, 0x000000);
     }
 
@@ -381,7 +366,7 @@ public abstract class HudElement {
      * @param outlined
      *            whether this bar has an outline or not
      */
-    public static void drawCustomBar(MatrixStack ms, int x, int y, int width, int height, double value, int colorGroundLight, int colorGroundDark, int colorBarLight, int colorBarDark, boolean outlined) {
+    public static void drawCustomBar(DrawContext ms, int x, int y, int width, int height, double value, int colorGroundLight, int colorGroundDark, int colorBarLight, int colorBarDark, boolean outlined) {
         drawCustomBar(ms, x, y, width, height, value, colorGroundLight, colorGroundDark, colorBarLight, colorBarDark, outlined, 0x000000);
     }
 
@@ -409,7 +394,7 @@ public abstract class HudElement {
      * @param colorOutline
      *            the color of the outline
      */
-    public static void drawCustomBar(MatrixStack ms, int x, int y, int width, int height, double value, int colorGroundLight, int colorGroundDark, int colorBarLight, int colorBarDark, int colorOutline) {
+    public static void drawCustomBar(DrawContext ms, int x, int y, int width, int height, double value, int colorGroundLight, int colorGroundDark, int colorBarLight, int colorBarDark, int colorOutline) {
         drawCustomBar(ms, x, y, width, height, value, colorGroundLight, colorGroundDark, colorBarLight, colorBarDark, true, colorOutline);
     }
 
@@ -439,7 +424,7 @@ public abstract class HudElement {
      * @param colorOutline
      *            the color of the outline
      */
-    public static void drawCustomBar(MatrixStack ms, int x, int y, int width, int height, double value, int colorGroundLight, int colorGroundDark, int colorBarLight, int colorBarDark, boolean outlined, int colorOutline) {
+    public static void drawCustomBar(DrawContext ms, int x, int y, int width, int height, double value, int colorGroundLight, int colorGroundDark, int colorBarLight, int colorBarDark, boolean outlined, int colorOutline) {
         if (value < 0.0D) {
             value = 0.0D;
         }else if (value > 100D) {
@@ -581,16 +566,6 @@ public abstract class HudElement {
     }
 
     /**
-     * Binds a texture to the TextureManager
-     * 
-     * @param res
-     *            The ResourceLocation of the texture that should be bind
-     */
-    protected void bind(Identifier res) {
-        RenderSystem.setShaderTexture(0, res);
-    }
-
-    /**
      * Returns the ResourceLocation for the skin of the player
      * 
      * @param player
@@ -615,7 +590,8 @@ public abstract class HudElement {
      * @param item
      *            the item (via ItemStack)
      */
-    protected void renderHotbarItem(MatrixStack matrixStack, int x, int y, float partialTicks, PlayerEntity player, ItemStack item) {
+    protected void renderHotbarItem(DrawContext graphics, int x, int y, float partialTicks, PlayerEntity player, ItemStack item) {
+        var matrixStack = graphics.getMatrices();
         if (!item.isEmpty()) {
             float f = (float)item.getBobbingAnimationTime() - partialTicks;
 
@@ -627,22 +603,22 @@ public abstract class HudElement {
                 matrixStack.translate((-(x + 8)), (-(y + 12)), 0.0F);
             }
 
-            this.mc.getItemRenderer().renderInGuiWithOverrides(matrixStack, player, item, x, y, x);
+            graphics.drawItem(item, x, y, x);
 
             if (f > 0.0F) {
                 matrixStack.pop();
             }
 
-            this.mc.getItemRenderer().renderGuiItemOverlay(matrixStack, this.mc.textRenderer, item, x, y);
+            graphics.drawItemInSlot(MinecraftClient.getInstance().textRenderer, item, x, y);
         }
     }
     
-    protected void drawStringWithBackground(MatrixStack ms, String text, int posX, int posY, int colorMain, int colorBackground) {
-        this.mc.textRenderer.draw(ms,text, posX + 1, posY, colorBackground);
-        this.mc.textRenderer.draw(ms,text, posX - 1, posY, colorBackground);
-        this.mc.textRenderer.draw(ms,text, posX, posY + 1, colorBackground);
-        this.mc.textRenderer.draw(ms,text, posX, posY - 1, colorBackground);
-        this.mc.textRenderer.draw(ms,text, posX, posY, colorMain);
+    protected void drawStringWithBackground(DrawContext ms, String text, int posX, int posY, int colorMain, int colorBackground) {
+        ms.drawText(this.mc.textRenderer, text, posX + 1, posY, colorBackground, false);
+        ms.drawText(this.mc.textRenderer, text, posX - 1, posY, colorBackground, false);
+        ms.drawText(this.mc.textRenderer, text, posX, posY + 1, colorBackground, false);
+        ms.drawText(this.mc.textRenderer, text, posX, posY - 1, colorBackground, false);
+        ms.drawText(this.mc.textRenderer, text, posX, posY, colorMain, false);
     }
     
     public boolean isChatOpen() {

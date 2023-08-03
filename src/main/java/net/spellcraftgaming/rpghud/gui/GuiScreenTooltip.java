@@ -9,10 +9,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.spellcraftgaming.rpghud.main.ModRPGHud;
 import net.spellcraftgaming.rpghud.settings.Settings;
@@ -27,7 +28,7 @@ public class GuiScreenTooltip extends Screen {
     protected List<GuiTextLabel> labelList = new ArrayList<GuiTextLabel>();
 
     @Override
-    public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
+    public void render(DrawContext ms, int mouseX, int mouseY, float partialTicks) {
         super.render(ms, mouseX, mouseY, partialTicks);
         for(GuiTextLabel label : labelList) {
             label.render(this, ms);
@@ -40,7 +41,7 @@ public class GuiScreenTooltip extends Screen {
     /**
      * Checks if a tooltip should be rendered and if so renders it on the screen.
      */
-    private void drawTooltip(MatrixStack ms, int mouseX, int mouseY) {
+    private void drawTooltip(DrawContext ms, int mouseX, int mouseY) {
         MinecraftClient mc = MinecraftClient.getInstance();
         TextRenderer fontRenderer = mc.textRenderer;
         GuiScreenTooltip gui = null;
@@ -68,13 +69,13 @@ public class GuiScreenTooltip extends Screen {
             int posY = mouseY + 5;
             int totalWidth = 0;
             boolean reverseY = false;
-            String[] tooltip = button.getTooltip();
+            List<OrderedText> tooltip = button.getTooltip().getLines(mc);
             if(!(tooltip == null)) {
                 int counter = 0;
-                for(int id = 0; id < tooltip.length; id++) {
-                    int width = fontRenderer.getWidth(tooltip[id]);
+                for(int id = 0; id < tooltip.size(); id++) {
+                    int width = fontRenderer.getWidth(tooltip.get(id));
                     if(totalWidth < width)
-                        totalWidth = fontRenderer.getWidth(tooltip[id]);
+                        totalWidth = fontRenderer.getWidth(tooltip.get(id));
                     counter++;
                 }
                 posX -= totalWidth / 2;
@@ -83,7 +84,7 @@ public class GuiScreenTooltip extends Screen {
                 if(posX < 0)
                     posX = 0;
 
-                if((posY + 3 + tooltip.length * 12 + 2) > gui.height)
+                if((posY + 3 + tooltip.size() * 12 + 2) > gui.height)
                     reverseY = true;
 
                 if(reverseY)
@@ -113,10 +114,10 @@ public class GuiScreenTooltip extends Screen {
             this.text = text;
         }
 
-        public void render(Screen gui, MatrixStack ms) {
+        public void render(Screen gui, DrawContext ms) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            client.textRenderer.draw(ms, text, x, y, 0xFFFFFFFF);
+            ms.drawCenteredTextWithShadow(client.textRenderer, text, x, y, 0xFFFFFFFF);
         }
     }
 

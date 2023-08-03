@@ -2,6 +2,7 @@ package net.spellcraftgaming.rpghud.gui;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.spellcraftgaming.rpghud.main.ModRPGHud;
@@ -13,7 +14,7 @@ public class GuiButtonTooltip extends GuiButtonLib {
 	public final String enumOptions;
 	public int id;
 	/** Array that contains the tooltip of this button */
-	private String[] tooltip;
+	private Tooltip tooltip;
 	/**
 	 * Initiates a new button
 	 * 
@@ -112,10 +113,10 @@ public class GuiButtonTooltip extends GuiButtonLib {
 
 	/**
 	 * Gives the tooltip of this button
-	 * 
+	 *
 	 * @return the Tooltip
 	 */
-	public String[] getTooltip() {
+	public Tooltip getTooltip() {
 		return this.tooltip;
 	}
 }

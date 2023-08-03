@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -74,7 +74,7 @@ public class GuiSliderMod extends GuiButtonTooltip {
             dispString = "";
         }
 	}
-    
+
     @Override
     public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
     	this.dragging = false;
@@ -131,7 +131,7 @@ public class GuiSliderMod extends GuiButtonTooltip {
     }
     
     @Override
-    public void render(MatrixStack ms, int mouseX, int mouseY, float partial)
+    public void render(DrawContext ms, int mouseX, int mouseY, float partial)
     {
         if (this.visible)
         {
@@ -154,12 +154,11 @@ public class GuiSliderMod extends GuiButtonTooltip {
             }
             
             String buttonText = getDisplayString();
-            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
-			DrawableHelper.drawTexture(ms, this.getX() + (int) (this.sliderValue * (this.width - 8)), this.getY(), 0, 66, 4, this.height / 2);
-			DrawableHelper.drawTexture(ms, this.getX() + (int) (this.sliderValue * (this.width - 8)), this.getY() + (this.height / 2), 0, 86 - (this.height / 2), 4, this.height / 2);
-			DrawableHelper.drawTexture(ms, this.getX() + (int) (this.sliderValue * (this.width - 8)) + 4, this.getY(), 196, 66, 4, this.height / 2);
-			DrawableHelper.drawTexture(ms, this.getX() + (int) (this.sliderValue * (this.width - 8)) + 4, this.getY() + (this.height / 2), 196, 86 - (this.height / 2), 4, this.height / 2);
-            DrawableHelper.drawCenteredTextWithShadow(ms, mc.textRenderer, buttonText, this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, color);
+			ms.drawTexture(WIDGETS_TEXTURE, this.getX() + (int) (this.sliderValue * (this.width - 8)), this.getY(), 0, 66, 4, this.height / 2);
+			ms.drawTexture(WIDGETS_TEXTURE, this.getX() + (int) (this.sliderValue * (this.width - 8)), this.getY() + (this.height / 2), 0, 86 - (this.height / 2), 4, this.height / 2);
+			ms.drawTexture(WIDGETS_TEXTURE, this.getX() + (int) (this.sliderValue * (this.width - 8)) + 4, this.getY(), 196, 66, 4, this.height / 2);
+			ms.drawTexture(WIDGETS_TEXTURE, this.getX() + (int) (this.sliderValue * (this.width - 8)) + 4, this.getY() + (this.height / 2), 196, 86 - (this.height / 2), 4, this.height / 2);
+            ms.drawCenteredTextWithShadow( mc.textRenderer, buttonText, this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, color);
         }
     }
     

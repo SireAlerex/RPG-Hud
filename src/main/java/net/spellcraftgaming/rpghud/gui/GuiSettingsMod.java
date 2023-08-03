@@ -8,7 +8,7 @@ import java.util.Map;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -162,9 +162,9 @@ public class GuiSettingsMod extends GuiScreenTooltip {
 	}
 
 	@Override
-	public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
+	public void render(DrawContext ms, int mouseX, int mouseY, float partialTicks) {
 		this.renderBackground(ms);
-		DrawableHelper.drawCenteredTextWithShadow(ms, client.textRenderer, I18n.translate("gui.rpg.settings", new Object[0]), this.width / 2, 12, 16777215);
+		ms.drawCenteredTextWithShadow(client.textRenderer, I18n.translate("gui.rpg.settings", new Object[0]), this.width / 2, 12, 16777215);
 		for(List<TextFieldWidget> positionPairs : textFields.values()) {
 			for(TextFieldWidget t : positionPairs)
 				t.render(ms, mouseX, mouseY, partialTicks);

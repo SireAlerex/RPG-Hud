@@ -2,8 +2,8 @@ package net.spellcraftgaming.rpghud.gui;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.util.function.Supplier;
@@ -20,7 +20,7 @@ public abstract class GuiButtonLib extends ButtonWidget{
 	}
 
 	@Override
-	public void renderButton(MatrixStack ms, int mouseX, int mouseY, float partial) {
+	public void renderButton(DrawContext ms, int mouseX, int mouseY, float partial) {
 		super.renderButton(ms, mouseX, mouseY, partial);
 		this.drawButton(mouseX, mouseY);
 	}
