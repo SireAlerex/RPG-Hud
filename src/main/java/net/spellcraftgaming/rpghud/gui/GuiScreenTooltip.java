@@ -41,7 +41,7 @@ public class GuiScreenTooltip extends Screen {
     /**
      * Checks if a tooltip should be rendered and if so renders it on the screen.
      */
-    private void drawTooltip(DrawContext ms, int mouseX, int mouseY) {
+    private void drawTooltip(DrawContext ctx, int mouseX, int mouseY) {
         MinecraftClient mc = MinecraftClient.getInstance();
         TextRenderer fontRenderer = mc.textRenderer;
         GuiScreenTooltip gui = null;
@@ -69,13 +69,13 @@ public class GuiScreenTooltip extends Screen {
             int posY = mouseY + 5;
             int totalWidth = 0;
             boolean reverseY = false;
-            List<OrderedText> tooltip = button.getTooltip().getLines(mc);
+            String[] tooltip = button.getTooltipAsStringArray();
             if(!(tooltip == null)) {
                 int counter = 0;
-                for(int id = 0; id < tooltip.size(); id++) {
-                    int width = fontRenderer.getWidth(tooltip.get(id));
+                for(int id = 0; id < tooltip.length; id++) {
+                    int width = fontRenderer.getWidth(tooltip[id]);
                     if(totalWidth < width)
-                        totalWidth = fontRenderer.getWidth(tooltip.get(id));
+                        totalWidth = fontRenderer.getWidth(tooltip[id]);
                     counter++;
                 }
                 posX -= totalWidth / 2;
@@ -84,19 +84,19 @@ public class GuiScreenTooltip extends Screen {
                 if(posX < 0)
                     posX = 0;
 
-                if((posY + 3 + tooltip.size() * 12 + 2) > gui.height)
+                if((posY + 3 + tooltip.length * 12 + 2) > gui.height)
                     reverseY = true;
 
                 if(reverseY)
-                    fill(ms, posX, posY - 3 - tooltip.length * 12 - 2, posX + totalWidth + 10, posY, 0xA0000000);
+                    ctx.fill(posX, posY - 3 - tooltip.length * 12 - 2, posX + totalWidth + 10, posY, 0xA0000000);
                 else
-                    fill(ms, posX, posY, posX + totalWidth + 10, posY + 3 + tooltip.length * 12 + 2, 0xA0000000);
+                    ctx.fill(posX, posY, posX + totalWidth + 10, posY + 3 + tooltip.length * 12 + 2, 0xA0000000);
                 for(int id = 0; id < tooltip.length; id++) {
                     if(!tooltip[id].isEmpty()) {
                         if(reverseY)
-                            DrawableHelper.drawTextWithShadow(ms, fontRenderer, tooltip[id], posX + 5, posY - 2 - 12 * (counter - id - 1) - 10, 0xBBBBBB);
+                            ctx.drawTextWithShadow(fontRenderer, tooltip[id], posX + 5, posY - 2 - 12 * (counter - id - 1) - 10, 0xBBBBBB);
                         else
-                            DrawableHelper.drawTextWithShadow(ms, fontRenderer,  tooltip[id], posX + 5, posY + 5 + 12 * id, 0xBBBBBB);
+                            ctx.drawTextWithShadow(fontRenderer,  tooltip[id], posX + 5, posY + 5 + 12 * id, 0xBBBBBB);
                     }
                 }
             }

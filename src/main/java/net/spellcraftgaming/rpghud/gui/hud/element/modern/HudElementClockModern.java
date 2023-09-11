@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -30,8 +30,9 @@ public class HudElementClockModern extends HudElementClockVanilla {
     }
 
     @Override
-    public void drawElement(DrawableHelper gui, MatrixStack ms, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
+    public void drawElement(DrawContext gui, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
         float scale = getScale();
+        MatrixStack ms = gui.getMatrices();
         ms.scale(scale, scale, scale);
         int yOffset = getPosY(scaledHeight);
         int xOffset = getPosX(scaledWidth);
@@ -42,8 +43,8 @@ public class HudElementClockModern extends HudElementClockVanilla {
         if(this.settings.getBoolValue(Settings.enable_clock_color)) {
             clockColor = getClockColor();
         }
-        drawRect(ms, xOffset, yOffset, width, height, 0xA0000000);
-        ms.drawCenteredTextWithShadow( this.mc.textRenderer, getTime(), xOffset + (width / 2), yOffset + 2, clockColor);
+        drawRect(gui, xOffset, yOffset, width, height, 0xA0000000);
+        gui.drawCenteredTextWithShadow( this.mc.textRenderer, getTime(), xOffset + (width / 2), yOffset + 2, clockColor);
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 

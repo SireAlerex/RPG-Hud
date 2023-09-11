@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
@@ -42,26 +42,27 @@ public class HudElementEntityInspectVanilla extends HudElement {
     }
 
     @Override
-    public void drawElement(DrawableHelper gui, MatrixStack ms, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
+    public void drawElement(DrawContext gui, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
         LivingEntity focused = getFocusedEntity(this.mc.player);
         if(focused != null) {
             int posX = (scaledWidth / 2) + this.settings.getPositionValue(Settings.inspector_position)[0];
             int posY = this.settings.getPositionValue(Settings.inspector_position)[1];
-            bind(DAMAGE_INDICATOR);
-            gui.drawTexture(ms, posX - 62, 20 + posY, 0, 0, 128, 36);
+//            bind(DAMAGE_INDICATOR);
+            gui.drawTexture(DAMAGE_INDICATOR, posX - 62, 20 + posY, 0, 0, 128, 36);
             float health = focused.getHealth();
             float maxHealth = focused.getMaxHealth();
             if(health > maxHealth) health = maxHealth;
-            drawCustomBar(ms, posX - 25, 34 + posY, 89, 8, (double) health / (double) maxHealth * 100D,
+            drawCustomBar(gui, posX - 25, 34 + posY, 89, 8, (double) health / (double) maxHealth * 100D,
                     this.settings.getIntValue(Settings.color_health), offsetColorPercent(this.settings.getIntValue(Settings.color_health), OFFSET_PERCENT));
             String stringHealth = ((double) Math.round(health * 10)) / 10 + "/" + ((double) Math.round(maxHealth * 10)) / 10;
+            MatrixStack ms = gui.getMatrices();
             ms.scale(0.5f, 0.5f, 0.5f);
-            ms.drawCenteredTextWithShadow( this.mc.textRenderer, stringHealth, (posX - 27 + 44) * 2, (36 + posY) * 2, -1);
+            gui.drawCenteredTextWithShadow( this.mc.textRenderer, stringHealth, (posX - 27 + 44) * 2, (36 + posY) * 2, -1);
             ms.scale(2f, 2f, 2f);
 
             int x = (posX - 29 + 44 - this.mc.textRenderer.getWidth(focused.getName().getString()) / 2);
             int y = 25 + posY;
-            this.drawStringWithBackground(ms, focused.getName().getString(), x, y, -1, 0);
+            this.drawStringWithBackground(gui, focused.getName().getString(), x, y, -1, 0);
 
             drawEntityOnScreen(posX - 60 + 16, 22 + 27 + posY, focused);
 
@@ -69,12 +70,13 @@ public class HudElementEntityInspectVanilla extends HudElement {
                 int armor = focused.getArmor();
                 if(armor > 0) {
                     String value = String.valueOf(armor);
-                    bind(DAMAGE_INDICATOR);
-                    gui.drawTexture(ms, posX - 26, posY+44, 0, 36, 19, 8);
-                    bind(DrawableHelper.GUI_ICONS_TEXTURE);
+//                    bind(DAMAGE_INDICATOR);
+                    gui.drawTexture(DAMAGE_INDICATOR, posX - 26, posY+44, 0, 36, 19, 8);
+//                    bind(DrawableHelper.GUI_ICONS_TEXTURE);
+                    Identifier icons = new Identifier("textures/gui/icons.png");
                     ms.scale(0.5f, 0.5f, 0.5f);
-                    gui.drawTexture(ms, (posX - 24) * 2 -1, (posY + 45) * 2, 34, 9, 9, 9);
-                    this.drawStringWithBackground(ms,value, (posX - 18) * 2 -2, (posY + 45) * 2 + 1, -1, 0);
+                    gui.drawTexture(icons, (posX - 24) * 2 -1, (posY + 45) * 2, 34, 9, 9, 9);
+                    this.drawStringWithBackground(gui, value, (posX - 18) * 2 -2, (posY + 45) * 2 + 1, -1, 0);
                     ms.scale(2f, 2f, 2f);
                 }  
             }
@@ -155,7 +157,7 @@ public class HudElementEntityInspectVanilla extends HudElement {
         Vec3d lookVec = watcher.getRotationVector();
         Vec3d vec2 = vec.add(lookVec.normalize().multiply(maxDistance));
 
-        BlockHitResult ray = watcher.world
+        BlockHitResult ray = watcher.getWorld()
                 .raycast(new RaycastContext(vec, vec2, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, watcher));
 
         double distance = maxDistance;
@@ -166,7 +168,7 @@ public class HudElementEntityInspectVanilla extends HudElement {
 
         double currentDistance = distance;
 
-        List<Entity> entitiesWithinMaxDistance = watcher.world.getOtherEntities(watcher,
+        List<Entity> entitiesWithinMaxDistance = watcher.getWorld().getOtherEntities(watcher,
                 watcher.getBoundingBox().stretch(lookVec.x * maxDistance, lookVec.y * maxDistance, lookVec.z * maxDistance).expand(1, 1, 1));
         for(Entity entity : entitiesWithinMaxDistance) {
             if(entity instanceof LivingEntity) {

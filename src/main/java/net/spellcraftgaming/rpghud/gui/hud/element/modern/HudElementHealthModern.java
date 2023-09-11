@@ -2,7 +2,7 @@ package net.spellcraftgaming.rpghud.gui.hud.element.modern;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.util.math.MathHelper;
@@ -25,7 +25,7 @@ public class HudElementHealthModern extends HudElement {
 	}
 
 	@Override
-	public void drawElement(DrawableHelper gui, MatrixStack ms, float zLevel, float partialTicks, int scaledHeight, int scaledWidth) {
+	public void drawElement(DrawContext gui, float zLevel, float partialTicks, int scaledHeight, int scaledWidth) {
 		int health = MathHelper.ceil(this.mc.player.getHealth());
 		int absorption = MathHelper.ceil(this.mc.player.getAbsorptionAmount());
 		int healthMax = MathHelper.ceil(this.mc.player.getMaxHealth());
@@ -42,9 +42,10 @@ public class HudElementHealthModern extends HudElement {
 		int posY = this.settings.getPositionValue(Settings.health_position)[1];
 
 		if (this.settings.getBoolValue(Settings.show_numbers_health) && this.settings.getBoolValue(Settings.show_numbers_food)) {
-			drawRect(ms, textPosX + (this.settings.getBoolValue(Settings.render_player_face) ? 23 : 2), posY + 4, width, 8, 0xA0000000);
+			drawRect(gui, textPosX + (this.settings.getBoolValue(Settings.render_player_face) ? 23 : 2), posY + 4, width, 8, 0xA0000000);
+			MatrixStack ms = gui.getMatrices();
 			ms.scale(0.5f, 0.5f, 0.5f);
-			ms.drawCenteredTextWithShadow( this.mc.textRenderer, stringHealth, textPosX * 2 + (this.settings.getBoolValue(Settings.render_player_face) ? 42 : 0) + width + 4, posY * 2 + 12, -1);
+			gui.drawCenteredTextWithShadow( this.mc.textRenderer, stringHealth, textPosX * 2 + (this.settings.getBoolValue(Settings.render_player_face) ? 42 : 0) + width + 4, posY * 2 + 12, -1);
 			ms.scale(2f, 2f, 2f);
 		}
 

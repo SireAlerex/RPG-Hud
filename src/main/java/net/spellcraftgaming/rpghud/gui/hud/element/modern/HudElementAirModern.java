@@ -2,7 +2,7 @@ package net.spellcraftgaming.rpghud.gui.hud.element.modern;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.registry.tag.FluidTags;
 import net.spellcraftgaming.rpghud.gui.hud.element.HudElement;
@@ -22,8 +22,9 @@ public class HudElementAirModern extends HudElement {
     }
 
     @Override
-    public void drawElement(DrawableHelper gui, MatrixStack ms, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
+    public void drawElement(DrawContext gui, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
         float scale = getScale();
+        MatrixStack ms = gui.getMatrices();
         ms.scale(scale, scale, scale);
 
         int airAmount = this.mc.player.getAir();
@@ -34,12 +35,12 @@ public class HudElementAirModern extends HudElement {
         int y = getPosY(scaledHeight);
         int x2 = getWidth(scaledWidth);
         int y2 = getHeight(scaledHeight);
-        drawRect(ms, x, y, x2, 2, 0xA0000000);
-        drawRect(ms, x, y + y2 - 2, x2, 2, 0xA0000000);
-        drawRect(ms, x, y + 2, 2, y2 - 4, 0xA0000000);
-        drawRect(ms, x + x2 - 2, y + 2, 2, y2 - 4, 0xA0000000);
-        drawRect(ms, x + 2, y + 2, x2 - 4, y2 - 4, 0x20FFFFFF);
-        drawRect(ms, x + 2, y + 2, (int) ((x2 - 4) * (airAmount / maxAir)), y2 - 4, this.settings.getIntValue(Settings.color_air));
+        drawRect(gui, x, y, x2, 2, 0xA0000000);
+        drawRect(gui, x, y + y2 - 2, x2, 2, 0xA0000000);
+        drawRect(gui, x, y + 2, 2, y2 - 4, 0xA0000000);
+        drawRect(gui, x + x2 - 2, y + 2, 2, y2 - 4, 0xA0000000);
+        drawRect(gui, x + 2, y + 2, x2 - 4, y2 - 4, 0x20FFFFFF);
+        drawRect(gui, x + 2, y + 2, (int) ((x2 - 4) * (airAmount / maxAir)), y2 - 4, this.settings.getIntValue(Settings.color_air));
 
         scale = getInvertedScale();
         ms.scale(scale, scale, scale);

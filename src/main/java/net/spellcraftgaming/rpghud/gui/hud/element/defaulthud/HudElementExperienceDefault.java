@@ -22,7 +22,7 @@ public class HudElementExperienceDefault extends HudElement {
 	}
 
 	@Override
-	public void drawElement(DrawContext gui, Identifier text, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
+	public void drawElement(DrawContext gui, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
 		int exp = MathHelper.ceil(this.mc.player.getNextLevelExperience() * this.mc.player.experienceProgress);
 		int expCap = this.mc.player.getNextLevelExperience();
 		double full = 100D / expCap;

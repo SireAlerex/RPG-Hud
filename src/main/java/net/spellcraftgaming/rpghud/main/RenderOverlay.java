@@ -6,7 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.spellcraftgaming.rpghud.gui.hud.element.HudElementType;
@@ -24,7 +24,7 @@ public class RenderOverlay implements HudRenderCallback{
         HudRenderCallback.EVENT.register(this);
     }
 
-    private void renderOverlay(MatrixStack ms, float partialTicks) {
+    private void renderOverlay(DrawContext ms, float partialTicks) {
         this.drawElement(HudElementType.WIDGET, ms, partialTicks);
         this.drawElement(HudElementType.CLOCK, ms, partialTicks);
         this.drawElement(HudElementType.DETAILS, ms, partialTicks);
@@ -54,14 +54,17 @@ public class RenderOverlay implements HudRenderCallback{
      * @param type         the HudElementType to be rendered
      * @param partialTicks the partialTicks to be used for animations
      */
-    private void drawElement(HudElementType type, MatrixStack ms, float partialTicks) {
+    private void drawElement(HudElementType type, DrawContext gui, float partialTicks) {
 
         if(this.rpgHud.getActiveHud().checkElementConditions(type)) {
             if(!preventElementRenderType(type)) {
-                bind(DrawableHelper.GUI_ICONS_TEXTURE);
+                MatrixStack ms = gui.getMatrices();
+//                bind(DrawContext.GUI_ICONS_TEXTURE)
+                Identifier gui_icons_texture = new Identifier("textures/gui/icons.png");
+                bind(gui_icons_texture);
                	ms.push();
                 RenderSystem.enableBlend();
-                this.rpgHud.getActiveHud().drawElement(type, this.mc.inGameHud, ms, partialTicks, partialTicks, this.mc.getWindow().getScaledWidth(),
+                this.rpgHud.getActiveHud().drawElement(type, gui, partialTicks, partialTicks, this.mc.getWindow().getScaledWidth(),
                         this.mc.getWindow().getScaledHeight());
                 ms.pop();
             }
@@ -118,9 +121,8 @@ public class RenderOverlay implements HudRenderCallback{
     }
 
     @Override
-    public void onHudRender(MatrixStack matrixStack, float tickDelta) {
-        renderOverlay(matrixStack, tickDelta);
-        
+    public void onHudRender(DrawContext gui, float tickDelta) {
+        renderOverlay(gui, tickDelta);
     }
     
     /*private static HudElementType getEventAlias(ElementType type) {

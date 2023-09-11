@@ -2,14 +2,18 @@ package net.spellcraftgaming.rpghud.mixin;
 
 import java.util.Random;
 
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -24,7 +28,7 @@ import net.spellcraftgaming.rpghud.gui.hud.element.HudElementType;
 import net.spellcraftgaming.rpghud.main.RenderOverlay;
 
 @Mixin(InGameHud.class)
-public class RenderOverlayMixin extends DrawableHelper {
+public class RenderOverlayMixin {
     private int lastHealthValue;
     private int renderHealthValue;
     private long lastHealthCheckTime;
@@ -39,8 +43,13 @@ public class RenderOverlayMixin extends DrawableHelper {
 
     @Inject(at = @At("HEAD"), method = "renderStatusBars", cancellable = true)
     private void renderStatusBars(CallbackInfo info) {
+        Identifier missing = new Identifier("rpghud:textures/missing_texture.png");
         MatrixStack matrixStack = new MatrixStack();
         MinecraftClient client = MinecraftClient.getInstance();
+        // TODO: initial capacity ??
+        BufferBuilder buffer = new BufferBuilder(1024);
+        VertexConsumerProvider.Immediate x = VertexConsumerProvider.immediate(buffer);
+        DrawContext gui = new DrawContext(client, x);
         int scaledWidth = client.getWindow().getScaledWidth();
         int scaledHeight = client.getWindow().getScaledHeight();
         Random random = new Random();
@@ -68,15 +77,15 @@ public class RenderOverlayMixin extends DrawableHelper {
                     if(v > 0) {
                         aa = m + z * 8;
                         if(z * 2 + 1 < v) {
-                            this.drawTexture(matrixStack, aa, s, 34, 9, 9, 9);
+                            gui.drawTexture(missing, aa, s, 34, 9, 9, 9);
                         }
 
                         if(z * 2 + 1 == v) {
-                            this.drawTexture(matrixStack, aa, s, 25, 9, 9, 9);
+                            gui.drawTexture(missing, aa, s, 25, 9, 9, 9);
                         }
 
                         if(z * 2 + 1 > v) {
-                            this.drawTexture(matrixStack, aa, s, 16, 9, 9, 9);
+                            gui.drawTexture(missing, aa, s, 16, 9, 9, 9);
                         }
                     }
                 }
@@ -134,36 +143,36 @@ public class RenderOverlayMixin extends DrawableHelper {
                     }
 
                     int af = 0;
-                    if(playerEntity.world.getLevelProperties().isHardcore()) {
+                    if(playerEntity.getWorld().getLevelProperties().isHardcore()) {
                         af = 5;
                     }
 
-                    this.drawTexture(matrixStack, ad, ae, 16 + ab * 9, 9 * af, 9, 9);
+                    gui.drawTexture(missing, ad, ae, 16 + ab * 9, 9 * af, 9, 9);
                     if(bl) {
                         if(z * 2 + 1 < j) {
-                            this.drawTexture(matrixStack, ad, ae, aa + 54, 9 * af, 9, 9);
+                            gui.drawTexture(missing, ad, ae, aa + 54, 9 * af, 9, 9);
                         }
 
                         if(z * 2 + 1 == j) {
-                            this.drawTexture(matrixStack, ad, ae, aa + 63, 9 * af, 9, 9);
+                            gui.drawTexture(missing, ad, ae, aa + 63, 9 * af, 9, 9);
                         }
                     }
 
                     if(u > 0) {
                         if(u == p && p % 2 == 1) {
-                            this.drawTexture(matrixStack, ad, ae, aa + 153, 9 * af, 9, 9);
+                            gui.drawTexture(missing, ad, ae, aa + 153, 9 * af, 9, 9);
                             --u;
                         } else {
-                            this.drawTexture(matrixStack, ad, ae, aa + 144, 9 * af, 9, 9);
+                            gui.drawTexture(missing, ad, ae, aa + 144, 9 * af, 9, 9);
                             u -= 2;
                         }
                     } else {
                         if(z * 2 + 1 < i) {
-                            this.drawTexture(matrixStack, ad, ae, aa + 36, 9 * af, 9, 9);
+                            gui.drawTexture(missing, ad, ae, aa + 36, 9 * af, 9, 9);
                         }
 
                         if(z * 2 + 1 == i) {
-                            this.drawTexture(matrixStack, ad, ae, aa + 45, 9 * af, 9, 9);
+                            gui.drawTexture(missing, ad, ae, aa + 45, 9 * af, 9, 9);
                         }
                     }
                 }
@@ -193,13 +202,13 @@ public class RenderOverlayMixin extends DrawableHelper {
                         }
 
                         al = n - ah * 8 - 9;
-                        this.drawTexture(matrixStack, al, ai, 16 + ak * 9, 27, 9, 9);
+                        gui.drawTexture(missing, al, ai, 16 + ak * 9, 27, 9, 9);
                         if(ah * 2 + 1 < k) {
-                            this.drawTexture(matrixStack, al, ai, ad + 36, 27, 9, 9);
+                            gui.drawTexture(missing, al, ai, ad + 36, 27, 9, 9);
                         }
 
                         if(ah * 2 + 1 == k) {
-                            this.drawTexture(matrixStack, al, ai, ad + 45, 27, 9, 9);
+                            gui.drawTexture(missing, al, ai, ad + 45, 27, 9, 9);
                         }
                     }
 
@@ -218,9 +227,9 @@ public class RenderOverlayMixin extends DrawableHelper {
 
                     for(int ar = 0; ar < ae + al; ++ar) {
                         if(ar < ae) {
-                            this.drawTexture(matrixStack, n - ar * 8 - 9, t, 16, 18, 9, 9);
+                            gui.drawTexture(missing, n - ar * 8 - 9, t, 16, 18, 9, 9);
                         } else {
-                            this.drawTexture(matrixStack, n - ar * 8 - 9, t, 25, 18, 9, 9);
+                            gui.drawTexture(missing, n - ar * 8 - 9, t, 25, 18, 9, 9);
                         }
                     }
                 }

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.spellcraftgaming.rpghud.gui.hud.element.HudElement;
 import net.spellcraftgaming.rpghud.gui.hud.element.HudElementType;
@@ -19,16 +19,25 @@ public class HudElementLevelExtended extends HudElement {
 	}
 
 	@Override
+	public void drawElement(DrawContext gui, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
+		MatrixStack ms = gui.getMatrices();
+		RenderSystem.disableBlend();
+		String level = String.valueOf(this.mc.player.experienceLevel);
+		gui.drawTextWithShadow(this.mc.textRenderer, level, (this.settings.getBoolValue(Settings.render_player_face) ? 38 : 13) + this.settings.getPositionValue(Settings.level_position)[0] - this.mc.textRenderer.getWidth(level) / 2, (this.settings.getBoolValue(Settings.render_player_face) ? 38 : 18) + this.settings.getPositionValue(Settings.level_position)[1], 0x80FF20);
+		RenderSystem.enableBlend();
+	}
+
+	@Override
 	public boolean checkConditions() {
 		return this.mc.interactionManager.hasStatusBars();
 	}
 
-	@Override
-	public void drawElement(DrawableHelper gui, MatrixStack ms, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
-		RenderSystem.disableBlend();
-		String level = String.valueOf(this.mc.player.experienceLevel);
-		DrawableHelper.drawTextWithShadow(ms, this.mc.textRenderer, level, (this.settings.getBoolValue(Settings.render_player_face) ? 38 : 13) + this.settings.getPositionValue(Settings.level_position)[0] - this.mc.textRenderer.getWidth(level) / 2, (this.settings.getBoolValue(Settings.render_player_face) ? 38 : 18) + this.settings.getPositionValue(Settings.level_position)[1], 0x80FF20);
-		RenderSystem.enableBlend();
-	}
+//	@Override
+//	public void drawElement(DrawableHelper gui, MatrixStack ms, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
+//		RenderSystem.disableBlend();
+//		String level = String.valueOf(this.mc.player.experienceLevel);
+//		DrawableHelper.drawTextWithShadow(ms, this.mc.textRenderer, level, (this.settings.getBoolValue(Settings.render_player_face) ? 38 : 13) + this.settings.getPositionValue(Settings.level_position)[0] - this.mc.textRenderer.getWidth(level) / 2, (this.settings.getBoolValue(Settings.render_player_face) ? 38 : 18) + this.settings.getPositionValue(Settings.level_position)[1], 0x80FF20);
+//		RenderSystem.enableBlend();
+//	}
 
 }

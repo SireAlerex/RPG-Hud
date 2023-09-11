@@ -248,7 +248,7 @@ public abstract class HudElement {
      * @param color
      *            the color of the rectangle
      */
-    public static void drawRect(DrawContext ms, int posX, int posY, int width, int height, int color) {
+    public static void drawRect(DrawContext gui, int posX, int posY, int width, int height, int color) {
     	if (color == -1)
             return;
         float f3;
@@ -265,10 +265,10 @@ public abstract class HudElement {
         RenderSystem.disableDepthTest();
         BufferBuilder vertexbuffer = Tessellator.getInstance().getBuffer();
         vertexbuffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        vertexbuffer.vertex(ms.getMatrices().peek().getPositionMatrix(), posX, posY + height, 0).color(f, f1, f2, f3).next();
-        vertexbuffer.vertex(ms.getMatrices().peek().getPositionMatrix(), posX + width, posY + height, 0).color(f, f1, f2, f3).next();
-        vertexbuffer.vertex(ms.getMatrices().peek().getPositionMatrix(), posX + width, posY, 0).color(f, f1, f2, f3).next();
-        vertexbuffer.vertex(ms.getMatrices().peek().getPositionMatrix(), posX, posY, 0).color(f, f1, f2, f3).next();
+        vertexbuffer.vertex(gui.getMatrices().peek().getPositionMatrix(), posX, posY + height, 0).color(f, f1, f2, f3).next();
+        vertexbuffer.vertex(gui.getMatrices().peek().getPositionMatrix(), posX + width, posY + height, 0).color(f, f1, f2, f3).next();
+        vertexbuffer.vertex(gui.getMatrices().peek().getPositionMatrix(), posX + width, posY, 0).color(f, f1, f2, f3).next();
+        vertexbuffer.vertex(gui.getMatrices().peek().getPositionMatrix(), posX, posY, 0).color(f, f1, f2, f3).next();
         BufferRenderer.drawWithGlobalProgram(vertexbuffer.end());
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();
@@ -312,8 +312,8 @@ public abstract class HudElement {
      * @param colorBarDark
      *            the color for the bar (dark
      */
-    public static void drawCustomBar(DrawContext ms, int x, int y, int width, int height, double value, int colorBarLight, int colorBarDark) {
-        drawCustomBar(ms, x, y, width, height, value, HudElement.COLOR_DEFAULT[0], HudElement.COLOR_DEFAULT[1], colorBarLight, colorBarDark, true, 0x000000);
+    public static void drawCustomBar(DrawContext gui, int x, int y, int width, int height, double value, int colorBarLight, int colorBarDark) {
+        drawCustomBar(gui, x, y, width, height, value, HudElement.COLOR_DEFAULT[0], HudElement.COLOR_DEFAULT[1], colorBarLight, colorBarDark, true, 0x000000);
     }
 
     /**
@@ -338,8 +338,8 @@ public abstract class HudElement {
      * @param colorBarDark
      *            the color for the bar (dark
      */
-    public static void drawCustomBar(DrawContext ms, int x, int y, int width, int height, double value, int colorGroundLight, int colorGroundDark, int colorBarLight, int colorBarDark) {
-        drawCustomBar(ms, x, y, width, height, value, colorGroundLight, colorGroundDark, colorBarLight, colorBarDark, true, 0x000000);
+    public static void drawCustomBar(DrawContext gui, int x, int y, int width, int height, double value, int colorGroundLight, int colorGroundDark, int colorBarLight, int colorBarDark) {
+        drawCustomBar(gui, x, y, width, height, value, colorGroundLight, colorGroundDark, colorBarLight, colorBarDark, true, 0x000000);
     }
 
     /**
@@ -613,12 +613,12 @@ public abstract class HudElement {
         }
     }
     
-    protected void drawStringWithBackground(DrawContext ms, String text, int posX, int posY, int colorMain, int colorBackground) {
-        ms.drawText(this.mc.textRenderer, text, posX + 1, posY, colorBackground, false);
-        ms.drawText(this.mc.textRenderer, text, posX - 1, posY, colorBackground, false);
-        ms.drawText(this.mc.textRenderer, text, posX, posY + 1, colorBackground, false);
-        ms.drawText(this.mc.textRenderer, text, posX, posY - 1, colorBackground, false);
-        ms.drawText(this.mc.textRenderer, text, posX, posY, colorMain, false);
+    protected void drawStringWithBackground(DrawContext gui, String text, int posX, int posY, int colorMain, int colorBackground) {
+        gui.drawText(this.mc.textRenderer, text, posX + 1, posY, colorBackground, false);
+        gui.drawText(this.mc.textRenderer, text, posX - 1, posY, colorBackground, false);
+        gui.drawText(this.mc.textRenderer, text, posX, posY + 1, colorBackground, false);
+        gui.drawText(this.mc.textRenderer, text, posX, posY - 1, colorBackground, false);
+        gui.drawText(this.mc.textRenderer, text, posX, posY, colorMain, false);
     }
     
     public boolean isChatOpen() {

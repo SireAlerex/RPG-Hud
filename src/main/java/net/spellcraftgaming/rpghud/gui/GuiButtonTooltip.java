@@ -14,7 +14,7 @@ public class GuiButtonTooltip extends GuiButtonLib {
 	public final String enumOptions;
 	public int id;
 	/** Array that contains the tooltip of this button */
-	private Tooltip tooltip;
+	private String[] tooltip;
 	/**
 	 * Initiates a new button
 	 * 
@@ -116,7 +116,7 @@ public class GuiButtonTooltip extends GuiButtonLib {
 	 *
 	 * @return the Tooltip
 	 */
-	public Tooltip getTooltip() {
+	public String[] getTooltipAsStringArray() {
 		return this.tooltip;
 	}
 }

@@ -72,7 +72,7 @@ public class TextFieldWidgetMod extends TextFieldWidget {
      * 
      * @return the Tooltip
      */
-    public String[] getTooltip() {
+    public String[] getTooltipAsStringArray() {
         return this.tooltip;
     }
 

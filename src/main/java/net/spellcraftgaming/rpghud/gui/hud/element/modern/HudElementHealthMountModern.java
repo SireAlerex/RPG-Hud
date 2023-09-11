@@ -2,7 +2,7 @@ package net.spellcraftgaming.rpghud.gui.hud.element.modern;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.spellcraftgaming.rpghud.gui.hud.HudModern;
@@ -24,7 +24,7 @@ public class HudElementHealthMountModern extends HudElement {
 	}
 
 	@Override
-	public void drawElement(DrawableHelper gui, MatrixStack ms, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
+	public void drawElement(DrawContext gui, float zLevel, float partialTicks, int scaledWidth, int scaledHeight) {
 		LivingEntity mount = (LivingEntity) this.mc.player.getVehicle();
 		int health = (int) Math.ceil(mount.getHealth());
 		int healthMax = (int) mount.getMaxHealth();
@@ -37,9 +37,10 @@ public class HudElementHealthMountModern extends HudElement {
 		int posY = this.settings.getPositionValue(Settings.mount_health_position)[1];
 		if (this.settings.getBoolValue(Settings.show_numbers_health)) {
 			int width2 = this.mc.textRenderer.getWidth(stringHealth) / 2;
-			drawRect(ms, posX, 24 + posY, width2 + 4, 5, 0xA0000000);
+			drawRect(gui, posX, 24 + posY, width2 + 4, 5, 0xA0000000);
+			MatrixStack ms = gui.getMatrices();
 			ms.scale(0.5f, 0.5f, 0.5f);
-			DrawableHelper.drawTextWithShadow(ms, this.mc.textRenderer, stringHealth, posX * 2 + 4, 48 + posY * 2, -1);
+			gui.drawTextWithShadow(this.mc.textRenderer, stringHealth, posX * 2 + 4, 48 + posY * 2, -1);
 			ms.scale(2f, 2f, 2f);
 		}
 
